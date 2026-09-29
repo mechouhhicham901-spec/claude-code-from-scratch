@@ -187,6 +187,34 @@ python s03_todo_write.py
 
 The Anthropic SDK hits your LiteLLM proxy, which translates everything to your chosen provider. Zero code changes required.
 
+### Option C — OmniRoute (free / fallback providers)
+
+[OmniRoute](https://github.com/diegosouzapw/OmniRoute) is a local AI gateway with an Anthropic-compatible `/v1/messages` endpoint. It can chain several providers (free tiers, your own keys) into a "combo" that falls back automatically when one runs out of quota — handy when your Anthropic credits are used up.
+
+**Step 1 — Install and start OmniRoute:**
+```bash
+npm install -g omniroute
+omniroute
+```
+The dashboard and API are served at `http://localhost:20128`.
+
+**Step 2 — Configure it in the dashboard:** connect providers, build a combo (fallback chain), and create an API key. The built-in `auto` combo works out of the box with no keys.
+
+**Step 3 — Set your `.env` to point at OmniRoute:**
+```env
+ANTHROPIC_BASE_URL=http://localhost:20128
+ANTHROPIC_API_KEY=your-omniroute-key
+MODEL_ID=auto
+```
+The Anthropic SDK appends `/v1/messages` to the base URL. Use your combo name as `MODEL_ID` to control which providers are used.
+
+**Step 4 — Run any session normally:**
+```bash
+python s03_todo_write.py
+```
+
+> These agents rely heavily on tool calling. Put models with solid tool-use support (e.g. Qwen coder, DeepSeek V3, Gemini) first in your combo — weak free models may ignore or malformat tool calls.
+
 ---
 
 ## The Core Foundation
